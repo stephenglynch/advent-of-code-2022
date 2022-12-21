@@ -70,21 +70,17 @@ fn parse_dir_tree(lines: &[&str]) -> Node {
 }
 
 fn list_directories(tree: &Node) -> Vec<Node> {
-    let mut acc = vec![];
-    list_directories2(&mut acc, tree);
-    return acc;
-}
-
-fn list_directories2(acc: &mut Vec<Node>, tree: &Node) {
+    let mut nodes = vec![];
     if let Node::Dir(dir) = tree {
-        acc.push(Node::Dir(dir.clone()));
+        nodes.push(Node::Dir(dir.clone()));
 
         for dir_name in dir.borrow().keys() {
             if dir_name != ".." {
-                list_directories2(acc, dir.borrow().get(dir_name).unwrap())
+                nodes.append(&mut list_directories(dir.borrow().get(dir_name).unwrap()));
             }
         }
     }
+    return nodes;
 }
 
 fn dir_size(tree: &Node) -> u32 {
