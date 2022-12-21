@@ -12,7 +12,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "day5a"
+name = "day5b"
 version = "0.1.0"
 dependencies = [
  "lazy_static",
