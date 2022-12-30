@@ -50,7 +50,7 @@ fn neighbours(region: &Region, node: (usize, usize)) -> Vec<(usize, usize)> {
     let col = col as i32;
     let num_cols = region.num_cols as i32;
     let num_rows = region.num_rows as i32;
-    let candidates = vec![(row-1, col), (row+1, col), (row, col-1), (row, col+1)];
+    let candidates = [(row-1, col), (row+1, col), (row, col-1), (row, col+1)];
 
     candidates
         .iter()
@@ -114,8 +114,8 @@ fn distance(region: Region) -> Option<u32> {
         // Remove current from unvisted
         for (nb_row, nb_col) in neighbours(&region, current) {
             let nb_dist = dist[nb_row * num_cols + nb_col];
-            if current_dist + 1 < nb_dist{
-                dist[nb_row * num_cols + nb_col] = current_dist + 1;
+            if current_dist.saturating_add(1) < nb_dist{
+                dist[nb_row * num_cols + nb_col] = current_dist.saturating_add(1);
             }
         }
     }
