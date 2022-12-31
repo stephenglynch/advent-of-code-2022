@@ -83,11 +83,10 @@ fn pop_next_shortest(region: &Region, unvisited: &mut Vec<(usize, usize)>, dist:
     return node;
 }
 
-fn distance(region: &Region) -> (Vec<u32>, Vec<Option<(usize, usize)>>) {
+fn distance(region: &Region) -> Vec<u32> {
     let num_rows = region.num_rows;
     let num_cols = region.num_cols;
     let mut dist = vec![u32::MAX; num_rows * num_cols];
-    let mut prev = vec![None; num_rows * num_cols];
     let mut unvisited = Vec::with_capacity(num_rows * num_cols);
 
     // Initialise unvisited
@@ -105,11 +104,6 @@ fn distance(region: &Region) -> (Vec<u32>, Vec<Option<(usize, usize)>>) {
         let current = pop_next_shortest(&region, &mut unvisited, &dist);
         let (current_row, current_col) = current;
         let current_dist = dist[current_row * num_cols + current_col];
-
-        // Check if we're done
-        // if current == region.end {
-        //     return Some((dist, prev));
-        // }
        
         // Remove current from unvisted
         for (nb_row, nb_col) in neighbours(&region, current) {
@@ -117,18 +111,17 @@ fn distance(region: &Region) -> (Vec<u32>, Vec<Option<(usize, usize)>>) {
             let nb_dist = dist[nb_pos];
             if current_dist.saturating_add(1) < nb_dist {
                 dist[nb_pos] = current_dist.saturating_add(1);
-                prev[nb_pos] = Some(current);
             }
         }
     }
 
-    return (dist, prev)
+    return dist
 }
 
 fn main() {
     let contents = fs::read_to_string("input/input.txt").unwrap();
     let region = parse(&contents);
-    let (dist, prev) = distance(&region);
+    let dist = distance(&region);
     let answer = region.memory.iter()
         .enumerate().filter(|(_, c)| **c == 0 || **c == 0)
         .map(|(i, _)| (i, dist[i]))
