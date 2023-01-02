@@ -51,7 +51,6 @@ fn compare(left: &Value, right: &Value) -> Order {
 
 fn main() {
     let contents = fs::read_to_string("input/input.txt").unwrap();
-
     let lines: Vec<&str> = contents.lines().collect();
 
     let mut answer = 0;

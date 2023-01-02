@@ -50,21 +50,29 @@ fn compare(left: &Value, right: &Value) -> Order {
 }
 
 fn main() {
+
+    // Parse into 'packets' (JSON objects) excluding empty lines
     let contents = fs::read_to_string("input/input.txt").unwrap();
+    let lines: Vec<&str> = contents.lines().filter(|x| !x.is_empty()).collect();
+    let mut packets: Vec<Value> = lines.iter().map(|x| serde_json::from_str(x).unwrap()).collect();
 
-    let lines: Vec<&str> = contents.lines().collect();
+    // Add dividers
+    let div1 = serde_json::to_value(vec![vec![2]]).unwrap();
+    let div2 = serde_json::to_value(vec![vec![6]]).unwrap();
+    packets.push(div1.clone());
+    packets.push(div2.clone());
 
-    let mut answer = 0;
-    for (ind, group) in lines.chunks(3).enumerate() {
-        let first: Value = serde_json::from_str(group[0]).unwrap();
-        let second: Value = serde_json::from_str(group[1]).unwrap();
-        let cmp = compare(&first, &second);
-        match cmp {
-            Order::Correct => answer += ind + 1,
-            _ => ()
+    // Sort packets
+    packets.sort_by(|l, r| {
+        match compare(l, r) {
+            Order::Correct => Ordering::Less,
+            Order::Match => Ordering::Equal,
+            Order::Incorrect => Ordering::Greater
         }
-        println!();
-    }
+    });
 
-    println!("answer: {}", answer);
+    let ind1 = packets.iter().position(|x| x == &div1).unwrap() + 1;
+    let ind2 = packets.iter().position(|x| x == &div2).unwrap() + 1;
+
+    println!("answer: {:?}", ind1 * ind2);
 }
