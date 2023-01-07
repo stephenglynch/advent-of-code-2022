@@ -1,12 +1,10 @@
 use std::fs;
 use std::cmp;
-use std::iter;
 
 struct Cave {
     grid: Vec<char>,
     x_min: usize,
     x_max: usize,
-    y_min: usize,
     y_max: usize
 }
 
@@ -27,11 +25,10 @@ fn build_cave(walls: &Vec<Vec<(usize, usize)>>) -> Cave {
     let (x, y): (Vec<usize>, Vec<usize>) = walls.iter().flatten().cloned().unzip();
     let x_min = x.iter().min().unwrap();
     let x_max = x.iter().max().unwrap();
-    let y_min = y.iter().min().unwrap();
     let y_max = y.iter().max().unwrap();
 
     let grid = vec![' '; (x_max+1) * (y_max+1)];
-    let mut cave = Cave {grid: grid, x_min: *x_min, x_max: *x_max, y_min: *y_min, y_max: *y_max};
+    let mut cave = Cave {grid: grid, x_min: *x_min, x_max: *x_max, y_max: *y_max};
 
     for wall in walls.iter() {
         for coords in wall.windows(2) {
